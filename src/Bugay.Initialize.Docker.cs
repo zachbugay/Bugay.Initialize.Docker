@@ -1,5 +1,9 @@
+using System;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -7,11 +11,12 @@ using Serilog;
 
 try
 {
-    var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+    var localAppData = Environment.GetEnvironmentVariable("LOCALAPPDATA");
     var logPath = Path.Combine(localAppData, "bugay-docker-installer", "logs", "log.txt");
+    var template = "[{Timestamp:HH:mm:ss} {Level:u3}] ({ProcessName}/{ProcessId}) {Message:lj}{NewLine}{Exception}";
     Log.Logger = new LoggerConfiguration()
-    .WriteTo.File(logPath, rollingInterval: RollingInterval.Day)
-    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] ({ProcessName}/{ProcessId}) {Message:lj}{NewLine}{Exception}")
+    .WriteTo.File(logPath, rollingInterval: RollingInterval.Day, outputTemplate: template)
+    .WriteTo.Console(outputTemplate: template)
     .Enrich.WithProcessId()
     .Enrich.WithProcessName()
     .CreateLogger();

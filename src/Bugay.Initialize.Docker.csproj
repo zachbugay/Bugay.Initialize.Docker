@@ -3,10 +3,8 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PublishAot>true</PublishAot>
-    <PackAsTool>true</PackAsTool>
     <UserSecretsId>Bugay.Initialize.Docker-9ee8685e5f96185cbf28460977a458b90a02e5c2360040818c62033d3a179903</UserSecretsId>
   </PropertyGroup>
 

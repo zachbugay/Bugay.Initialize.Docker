@@ -8,14 +8,18 @@ using Serilog;
 
 try
 {
-    var localAppData = Environment.GetEnvironmentVariable("LOCALAPPDATA")
-        ?? throw new InvalidOperationException("LOCALAPPDATA environment variable is not set.");
+    var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
-    var logPath = Path.Combine(localAppData, "bugay-docker-installer", "logs", "log.txt");
+    var logDirectory = Path.Combine(localAppData, "bugay-docker-installer", "logs");
+
+    var logFileName = $"bugay.initialze.docker-{DateTime.Now:yyyy-MM-dd}.log";
     var template = "[{Timestamp:HH:mm:ss} {Level:u3}] ({ProcessName}/{ProcessId}) {Message:lj}{NewLine}{Exception}";
 
     Log.Logger = new LoggerConfiguration()
-        .WriteTo.File(logPath, rollingInterval: RollingInterval.Day, outputTemplate: template)
+        .WriteTo.File(Path.Combine(logDirectory, logFileName),
+            rollingInterval: RollingInterval.Infinite,
+            retainedFileCountLimit: 5,
+            outputTemplate: template)
         .WriteTo.Console(outputTemplate: template)
         .Enrich.WithProcessId()
         .Enrich.WithProcessName()

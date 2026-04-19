@@ -5,7 +5,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   version:
@@ -54,3 +54,27 @@ jobs:
         with:
           name: Bugay.Initialize.Docker-${{ needs.version.outputs.semver }}-${{ matrix.arch }}
           path: src/bin/Release/net10.0/${{ matrix.arch }}/publish/
+
+  release:
+    needs: [version, build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v8
+        with:
+          path: artifacts
+
+      - name: Zip artifacts
+        run: |
+          cd artifacts
+          for dir in */; do
+            (cd "$dir" && zip -r "../../${dir%/}.zip" .)
+          done
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: v${{ needs.version.outputs.semver }}
+          name: v${{ needs.version.outputs.semver }}
+          generate_release_notes: true
+          files: '*.zip'

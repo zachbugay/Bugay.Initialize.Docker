@@ -78,7 +78,6 @@ jobs:
           for dir in */; do
             (cd "$dir" && zip -r "../../${dir%/}.zip" .)
           done
-          mv *.zip "$GITHUB_WORKSPACE/"
 
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@v6
